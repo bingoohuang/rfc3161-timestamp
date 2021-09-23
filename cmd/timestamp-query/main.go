@@ -21,7 +21,13 @@ func main() {
 	server := envFlag("url", "https://freetsa.org/tsr", "timestamp server address")
 	user := envFlag("user", "", "username:password")
 	dumpBody := flag.Bool("dump-body", false, "dump body")
+	raw := flag.Bool("raw", false, "keep json raw output (no pretty)")
 	flag.Parse()
+
+	log.Printf("Request: %s", *request)
+	log.Printf("URL: %s", *server)
+	log.Printf("User: %s", *user)
+	log.Printf("Dump-Body: %v", *dumpBody)
 
 	opts := &timestamp.RequestOptions{Hash: crypto.SHA256, Certificates: true}
 	tsq, err := timestamp.CreateRequest(strings.NewReader(*request), opts)
@@ -48,7 +54,11 @@ func main() {
 	logFatal(err)
 
 	if v, err := timestamp.ParseResponse(resp); err == nil {
-		log.Printf("Resp: %s", jj.Pretty(jsonify(v)))
+		j := jsonify(v)
+		if !*raw {
+			j = jj.Pretty(j)
+		}
+		log.Printf("Resp: %s", j)
 	} else if !*dumpBody {
 		log.Printf("Resp: %s", resp)
 	}
