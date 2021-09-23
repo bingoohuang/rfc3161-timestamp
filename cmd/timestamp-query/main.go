@@ -29,6 +29,13 @@ func main() {
 	log.Printf("User: %s", *user)
 	log.Printf("Dump-Body: %v", *dumpBody)
 
+	if strings.HasPrefix(*server, "@") {
+		respBody, err := ioutil.ReadFile((*server)[1:])
+		logFatal(err)
+		parseResponse(respBody, *raw, *dumpBody)
+		return
+	}
+
 	opts := &timestamp.RequestOptions{Hash: crypto.SHA256, Certificates: true}
 	tsq, err := timestamp.CreateRequest(strings.NewReader(*request), opts)
 	logFatal(err)
@@ -53,13 +60,17 @@ func main() {
 	resp, err := ioutil.ReadAll(tsr.Body)
 	logFatal(err)
 
+	parseResponse(resp, *raw, *dumpBody)
+}
+
+func parseResponse(resp []byte, raw, dumpBody bool) {
 	if v, err := timestamp.ParseResponse(resp); err == nil {
 		j := jsonify(v)
-		if !*raw {
+		if !raw {
 			j = jj.Pretty(j)
 		}
 		log.Printf("Resp: %s", j)
-	} else if !*dumpBody {
+	} else if !dumpBody {
 		log.Printf("Resp: %s", resp)
 	}
 }
