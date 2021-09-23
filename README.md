@@ -68,10 +68,7 @@ demo scripts:
 ```sh
 $ echo hello > inputfile.txt
 $ openssl ts -query -data inputfile.txt -cert -sha256 -no_nonce -out request.tsq
-$ curl -k -H "Content-Type: application/timestamp-query" --data-binary @request.tsq https://freetsa.org/tsr -o digicert.tsr
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100  5521    0  5462  100    59   5810     62 --:--:-- --:--:-- --:--:--  5867
+$ curl -ks -H "Content-Type: application/timestamp-query" --data-binary @request.tsq https://freetsa.org/tsr -o digicert.tsr
 $ timestamp-query -url @digicert.tsr -raw
 2021/09/23 15:14:27 Request: ExampleCreateRequestParseResponse
 2021/09/23 15:14:27 URL: @digicert.tsr
