@@ -15,46 +15,47 @@ import (
 )
 
 func main() {
-	timestampRequest := flag.String("request",
-		getEnv("request", "ExampleCreateRequestParseResponse"), "timestamp request")
-	timestampServer := flag.String("url",
-		getEnv("url", "https://freetsa.org/tsr"), "timestamp server address")
-	user := flag.String("user", getEnv("user", ""), "username:password")
+	request := envFlag("request", "ExampleCreateRequestParseResponse", "timestamp request")
+	server := envFlag("url", "https://freetsa.org/tsr", "timestamp server address")
+	user := envFlag("user", "", "username:password")
 	flag.Parse()
 
-	tsq, err := timestamp.CreateRequest(strings.NewReader(*timestampRequest),
-		&timestamp.RequestOptions{Hash: crypto.SHA256, Certificates: true})
-	if err != nil {
-		log.Fatal(err)
-	}
+	opts := &timestamp.RequestOptions{Hash: crypto.SHA256, Certificates: true}
+	tsq, err := timestamp.CreateRequest(strings.NewReader(*request), opts)
+	logFatal(err)
 
-	r, err := http.NewRequest("POST", *timestampServer, bytes.NewReader(tsq))
-	if err != nil {
-		log.Fatal(err)
-	}
+	r, err := http.NewRequest("POST", *server, bytes.NewReader(tsq))
+	logFatal(err)
+
 	r.Header.Set("Content-Type", "application/timestamp-query")
 	if *user != "" {
 		r.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(*user)))
 	}
 
 	tsr, err := http.DefaultClient.Do(r)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logFatal(err)
 
 	log.Printf("StatusCode: %d", tsr.StatusCode)
 	log.Printf("Header: %s", jsonify(tsr.Header))
 
 	resp, err := ioutil.ReadAll(tsr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logFatal(err)
 
 	tsResp, err := timestamp.ParseResponse(resp)
 	if err != nil {
 		log.Printf("Resp: %s", resp)
 	} else {
 		log.Printf("Resp: %s", jsonify(tsResp))
+	}
+}
+
+func envFlag(name string, value string, usage string) *string {
+	return flag.String(name, getEnv(name, value), usage)
+}
+
+func logFatal(err error) {
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
