@@ -14,16 +14,6 @@ import (
 	"strings"
 )
 
-const EnvPrefix = "TIMESTAMP_QUERY_"
-
-func getEnv(name, defaultValue string) string {
-	envValue := os.Getenv(EnvPrefix + strings.ToUpper(name))
-	if envValue == "" {
-		return defaultValue
-	}
-	return envValue
-}
-
 func main() {
 	timestampRequest := flag.String("request",
 		getEnv("request", "ExampleCreateRequestParseResponse"), "timestamp request")
@@ -72,4 +62,13 @@ func main() {
 func jsonify(v interface{}) []byte {
 	data, _ := json.Marshal(v)
 	return data
+}
+
+const EnvPrefix = "TIMESTAMP_QUERY_"
+
+func getEnv(name, defaultValue string) string {
+	if v := os.Getenv(EnvPrefix + strings.ToUpper(name)); v != "" {
+		return v
+	}
+	return defaultValue
 }
