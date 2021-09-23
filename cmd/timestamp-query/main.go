@@ -34,8 +34,7 @@ func main() {
 	}
 	r.Header.Set("Content-Type", "application/timestamp-query")
 	if *user != "" {
-		basicAuth := base64.StdEncoding.EncodeToString([]byte(*user))
-		r.Header.Set("Authorization", "Basic "+basicAuth)
+		r.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(*user)))
 	}
 
 	tsr, err := http.DefaultClient.Do(r)
@@ -53,10 +52,10 @@ func main() {
 
 	tsResp, err := timestamp.ParseResponse(resp)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Resp: %s", resp)
+	} else {
+		log.Printf("Resp: %s", jsonify(tsResp))
 	}
-
-	log.Printf("Resp: %s", jsonify(tsResp))
 }
 
 func jsonify(v interface{}) []byte {
