@@ -1,4 +1,4 @@
-# 【RFC3161](https://www.ietf.org/rfc/rfc3161.txt) Time-Stamp Protocol (TSP) package for Go
+# [RFC3161](https://www.ietf.org/rfc/rfc3161.txt) Time-Stamp Protocol (TSP) package for Go
 
 [![Build & Test](https://github.com/bingoohuang/rfc3161-timestamp/workflows/Build%20&%20Test/badge.svg)](https://github.com/bingoohuang/rfc3161-timestamp/actions?query=workflow%3Abuild-and-test)
 [![golangci-lint](https://github.com/bingoohuang/rfc3161-timestamp/workflows/golangci-lint/badge.svg)](https://github.com/bingoohuang/rfc3161-timestamp/actions?query=workflow%3Agolangci-lint)
