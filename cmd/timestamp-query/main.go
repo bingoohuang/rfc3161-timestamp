@@ -55,7 +55,7 @@ func main() {
 }
 
 func envFlag(name string, value string, usage string) *string {
-	return flag.String(name, getEnv(name, value), usage)
+	return flag.String(name, getEnv(name, value), usage+`, env `+envName(name))
 }
 
 func logFatal(err error) {
@@ -72,8 +72,12 @@ func jsonify(v interface{}) []byte {
 const EnvPrefix = "TIMESTAMP_QUERY_"
 
 func getEnv(name, defaultValue string) string {
-	if v := os.Getenv(EnvPrefix + strings.ToUpper(name)); v != "" {
+	if v := os.Getenv(envName(name)); v != "" {
 		return v
 	}
 	return defaultValue
+}
+
+func envName(name string) string {
+	return EnvPrefix + strings.ToUpper(name)
 }
